@@ -1,0 +1,186 @@
+{% extends 'Layouts/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}Perfil{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css"
+          integrity="sha512-UtLOu9C7NuThQhuXXrGwx9Jb/z9zPQJctuAgNUBK3Z6kkSYT9wJ+2+dh6klS+TDBCV9kNPBbAxbVD+vCcfGPaA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+{% endblock %}
+
+{% block navbar %}
+    {% include 'Components/ui/navbar.html' %}
+{% endblock %}
+
+{% block sub_menu %}
+{% endblock %}
+
+{% block content %}
+    <section class="max-w-screen-xl mx-auto">
+        <section class="grid grid-auto-1fr gap-4">
+            {% include "Components/ui/userActionsNavbar.html" %}
+            <section class="">
+                <h1 class="text-5xl font-bold dark:text-white mb-6">Perfil</h1>
+                {% if form.errors %}
+                    <div class="flex p-4 mb-4 text-sm text-red-600 rounded-lg transition bg-red-100 hover:bg-red-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-red-400"
+                         role="alert">
+                        {% include "Components/Icons/circleInfo.html" with class="flex-shrink-0 inline w-4 h-4 me-3 mt-[2px]" %}
+                        <span class="sr-only">Danger</span>
+                        <div>
+                            <span class="font-medium">Por favor, corrige los siguientes errores:</span>
+                            <ul class="mt-1.5 list-disc list-inside">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>
+                                            <span class="font-bold">{{ field.label }}</span>:
+                                            <span class="text-gray-600 dark:text-gray-300">{{ error }}</span>
+                                        </li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+                <form id="updateUserInfo" class="grid md:grid-auto-1fr gap-4" method="post"
+                      enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <section>
+                        <figure class="w-56 mx-auto overflow-hidden relative mb-2">
+                            <img src="{{ object.get_avatar }}" class="h-auto w-full rounded-lg mb-2 object-cover"
+                                 loading="lazy" alt="Imagen del usuario {{ object.get_full_name }}" id="imgOutput">
+                            {% render_field form.image class="hidden" %}
+                        </figure>
+                        <small class="block text-center text-gray-600 dark:text-gray-300">{{ form.image.help_text }}</small>
+                        <button data-modal-target="imageModal" data-modal-toggle="imageModal"
+                                class="block text-white mx-auto bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                type="button">
+                            Subir imagen
+                        </button>
+                    </section>
+                    <div>
+                        <section class="flex flex-wrap gap-4 items-center w-full mb-4">
+                            <div class="flex-1">
+                                <label for="{{ form.first_name.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.first_name.label }}
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                        {% include "Components/Icons/user.html" with class="w-4 h-4 text-gray-500 dark:text-gray-400" %}
+                                    </div>
+                                    {% render_field form.first_name class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <label for="{{ form.last_name.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.last_name.label }}
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                        {% include "Components/Icons/user.html" with class="w-4 h-4 text-gray-500 dark:text-gray-400" %}
+                                    </div>
+                                    {% render_field form.last_name class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                        </section>
+                        <section class="flex flex-wrap gap-4 items-center w-full mb-4">
+                            <div class="flex-1">
+                                <label for="{{ form.email.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.email.label }}
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                        {% include "Components/Icons/mail.html" with class="w-4 h-4 text-gray-500 dark:text-gray-400" %}
+                                    </div>
+                                    {% render_field form.email class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <label for="{{ form.username.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.username.label }}
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                        {% include "Components/Icons/user.html" with class="w-4 h-4 text-gray-500 dark:text-gray-400" %}
+                                    </div>
+                                    {% render_field form.username class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                        </section>
+                        <section class="flex flex-wrap gap-4 items-center w-full mb-4">
+                            <div class="flex-1">
+                                <label for="{{ form.birth_date.id_for_label }}"
+                                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.birth_date.label }} - ({{ object.get_birth_date }})
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                                        {% include "Components/Icons/iconCalendarEvent.html" with class="w-4 h-4 text-gray-500 dark:text-gray-400" %}
+                                    </div>
+                                    {% render_field form.birth_date class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                            <div class="flex items-center flex-1">
+                                <div class="flex-1">
+                                    <label for="{{ form.country.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.country.label }}
+                                    </label>
+                                    {% render_field form.country class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg rounded-tr-none rounded-br-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                                <div class="flex-1">
+                                    <label for="{{ form.phone.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.phone.label }}
+                                    </label>
+                                    {% render_field form.phone class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg rounded-tl-none rounded-bl-none focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                            </div>
+                        </section>
+                        <section class="mb-4">
+                            <label for="{{ form.bio.id_for_label }}"
+                                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                {{ form.bio.label }}
+                            </label>
+                            {% render_field form.bio class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                        </section>
+                    </div>
+                </form>
+                <div class="flex">
+                    <button type="submit" form="updateUserInfo"
+                            class="ms-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        Guardar
+                    </button>
+                </div>
+            </section>
+        </section>
+        {% include "Components/ui/modalChooseImage.html" with avatar_url=object.get_avatar text_alt=object.get_full_name help_text=form.image.help_text %}
+    </section>
+{% endblock %}
+
+{% block footer %}
+    {% include 'Components/ui/footer.html' %}
+{% endblock %}
+
+{% block extra_body %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"
+            integrity="sha512-JyCZjCOZoyeQZSd5+YEAcFgz2fowJ1F1hyJOXgtKu4llIa0KneLcidn5bwfutiehUTiOuK87A986BZJMko0eWQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'Home/scripts/components/Helpers/ImageCropper.js' %}"></script>
+    <script>
+        new ImageCropper({
+            imgToCropSelector: '#imgToCrop',
+            imgOutputSelector: '#imgOutput',
+            buttonSelector: '#cropImage',
+            uploadImgSelector: '#uploadImg',
+            inputFileSelector: '#id_image',
+            aspectRatio: 1 // Puedes ajustar el aspecto según las necesidades
+        });
+    </script>
+{% endblock %}

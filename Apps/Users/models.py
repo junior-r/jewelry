@@ -65,11 +65,14 @@ class User(AbstractUser):
             return badge.format('purple', role)
         return badge.format('blue', role)
 
+    def get_birth_date(self):
+        return self.birth_date if self.birth_date else "No disponible"
+
     def get_absolute_url(self):
-        return ""  # reverse('Users:profile', kwargs={'username': self.username})
+        return reverse('Users:profile', kwargs={'username': self.username})
 
     def get_update_url(self):
-        return ""  # reverse('Users:update', kwargs={'pk': self.pk})
+        return reverse('Users:update', kwargs={'pk': self.pk})
 
     def get_change_rol_url(self):
         return ""  # reverse('Users:change-role', kwargs={'pk': self.pk})
