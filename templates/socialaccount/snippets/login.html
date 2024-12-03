@@ -1,0 +1,16 @@
+{% load i18n %}
+{% load allauth %}
+{% load socialaccount %}
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers %}
+    {% if not SOCIALACCOUNT_ONLY %}
+{#        <div class="mb-4">#}
+{#            <div class="inline-flex items-center justify-center w-full relative">#}
+{#                <hr class="w-64 h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">#}
+{#            </div>#}
+{#            <h2 class="text-lg text-gray-900 dark:text-gray-300 text-center m-0">{% translate "Or use a third-party" %}</h2>#}
+{#        </div>#}
+    {% endif %}
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+    {% include "socialaccount/snippets/login_extra.html" %}
+{% endif %}

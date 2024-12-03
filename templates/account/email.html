@@ -1,0 +1,107 @@
+{% extends "account/base_manage_email.html" %}
+{% load allauth i18n widget_tweaks %}
+{% block head_title %}
+    {% trans "Email Addresses" %}
+{% endblock head_title %}
+{% block content %}
+    <section class="bg-transparent min-h-screen">
+        <div class="max-w-screen-xl w-full p-6 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+            <div class="flex gap-4 justify-between items-center">
+                <h1 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex-1">
+                    {% trans "Email Addresses" %}
+                </h1>
+                {% if can_add_email %}
+                    {% url 'account_email' as action_url %}
+                    <form action="{{ action_url }}" method="post" class="my-4 flex-1">
+                        {% csrf_token %}
+                        <div class="flex items-center gap-2 max-w-md w-full ms-auto">
+                            <div class="relative z-0 flex-1">
+                                {% render_field form.email placeholder=" " class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" %}
+                                <label for="floating_standard"
+                                       class="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">
+                                    {% trans "Add Email" %}
+                                </label>
+                            </div>
+                            <button type="submit" name="action_add"
+                                    class="p-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                {% include "Components/Icons/circleAdd.html" with class="w-4 h-4" %}
+                                <span class="sr-only">{% trans "Add Email" %}</span>
+                            </button>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+            {% if emailaddresses %}
+                {% url 'account_email' as email_url %}
+                <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                    {% trans 'The following email addresses are associated with your account:' %}
+                </p>
+                <form action="{{ email_url }}" method="post">
+                    {% csrf_token %}
+                    {% for radio in emailaddress_radios %}
+                        <div class="flex items-center gap-4 p-4 border-b">
+                            {% with emailaddress=radio.emailaddress %}
+                                <div class="flex items-center gap-2">
+                                    {% if emailaddress.verified %}
+                                        <span class="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"
+                                              title="{% translate "Verified" %}">{% include "Components/Icons/circleCheck.html" with class="w-5 h-5" %}</span>
+                                    {% else %}
+                                        <span class="bg-red-100 text-red-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+                                              title="{% translate "Unverified" %}">{% include "Components/Icons/circleX.html" with class="w-5 h-5" %}</span>
+                                    {% endif %}
+                                    {% if emailaddress.primary %}
+                                        <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300"
+                                              title="{% translate "Primary" %}">{% include "Components/Icons/star.html" with class="w-5 h-5" %}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="flex items-center flex-1">
+                                    <input {% if radio.checked %} checked {% endif %} id="{{ radio.id }}" type="radio"
+                                                                  value="{{ emailaddress.email }}" name="email"
+                                                                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                    <label for="{{ radio.id }}"
+                                           class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ emailaddress.email }}</label>
+                                </div>
+                                <div class="inline-flex rounded-md items-center" role="group">
+                                    {% if not emailaddress.primary %}
+                                        <button type="submit" name="action_primary"
+                                                class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
+                                            {% trans 'Make Primary' %}
+                                        </button>
+                                    {% endif %}
+                                    <button type="submit" name="action_send"
+                                            class="{% if emailaddress.primary %} rounded-s-lg border-l {% endif %} px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
+                                        {% trans 'Re-send Verification' %}
+                                    </button>
+                                    <button type="submit" name="action_remove"
+                                            class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white">
+                                        {% trans 'Remove' %}
+                                    </button>
+                                </div>
+                            {% endwith %}
+                        </div>
+                    {% endfor %}
+                </form>
+            {% else %}
+                {% include "account/snippets/warn_no_email.html" %}
+            {% endif %}
+        </div>
+    </section>
+{% endblock content %}
+{% block extra_body %}
+    <script>
+        (() => {
+            const message = "{% trans 'Do you really want to remove the selected email address?' %}";
+            const action = document.querySelectorAll('[name="action_remove"]');
+
+            if (action) {
+                action.forEach((el) => {
+                    el.addEventListener('click', (e) => {
+                        if (!confirm(message)) {
+                            e.preventDefault();
+                        }
+                    });
+                });
+            }
+        })();
+    </script>
+{% endblock extra_body %}

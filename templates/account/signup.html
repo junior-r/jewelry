@@ -1,0 +1,187 @@
+{% extends "account/base_entrance.html" %}
+{% load static %}
+{% load allauth i18n widget_tweaks %}
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+{% block content %}
+    {% setvar link %}
+        <a href="{{ login_url }}">
+    {% endsetvar %}
+{% setvar end_link %}
+    </a>
+{% endsetvar %}
+    <section class="bg-transparent min-h-screen">
+        <div class="flex flex-col items-center justify-center px-6 py-8 max-w-2xl w-full mx-auto lg:py-0">
+            <a href="{% url "Home:index" %}"
+               class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+                     alt="logo">
+                AAplus
+            </a>
+            <div class="w-full bg-white rounded-lg shadow-lg dark:border md:mt-0 xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <section class="mb-8">
+                        <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-2">
+                            {% translate "Create an account" %}
+                        </h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% translate "Choose your preferred signup method" %}
+                        </p>
+                    </section>
+                    {% url 'account_signup' as action_url %}
+                    <form class="space-y-4 md:space-y-6" action="{{ action_url }}" method="post"
+                          enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <section id="tabsMenu"
+                                 class="w-full p-1 rounded-lg flex gap-1 items-center justify-center bg-gray-100 dark:bg-gray-700">
+                            <button type="button" id="credentialsTab"
+                                    class="flex-1 py-1 px-2 rounded-lg text-center font-semibold shadow bg-blue-400 dark:bg-white text-white dark:text-blue-500">
+                                Credenciales
+                            </button>
+                            <button type="button" id="alternativesTab"
+                                    class="flex-1 py-1 px-2 rounded-lg text-center font-semibold shadow-none bg-transparent text-gray-400">
+                                Alternativas
+                            </button>
+                        </section>
+
+                        <section id="credentialsTabContent" class="flex flex-col gap-4">
+                            <div class="flex flex-wrap gap-4">
+                                <article class="flex flex-wrap justify-between gap-2">
+                                    <label class="w-full mx-auto">
+                                        {% render_field form.image class="custom-file-input hidden" %}
+                                        <figure class="w-56 cursor-pointer mx-auto overflow-hidden h-96 relative">
+                                            <img class="h-auto w-full rounded-lg mb-2"
+                                                 id="{{ form.image.id_for_label }}Preview"
+                                                 src="{% static "Home/images/user_profile_placeholder.webp" %}"
+                                                 alt="image description">
+                                            <figcaption
+                                                    class="text-center text-gray-900 dark:text-white">{{ form.image.label }}</figcaption>
+                                            <small class="block text-center text-gray-600 dark:text-gray-300">{{ form.image.help_text }}</small>
+                                            <button type="button" id="{{ form.image.id_for_label }}ClearBtn"
+                                                    data-src-img="{% static "Home/images/user_profile_placeholder.webp" %}"
+                                                    class="p-1 bg-red-600 text-white rounded absolute top-0 left-0 hidden">
+                                                {% include "Components/Icons/trash.html" with class="w-5 h-5" %}
+                                            </button>
+                                        </figure>
+                                    </label>
+                                </article>
+                                <section class="flex-1 space-y-4">
+                                    <div>
+                                        <label for="{{ form.first_name.id_for_label }}"
+                                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ form.first_name.label }}
+                                        </label>
+                                        {% render_field form.first_name class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.last_name.id_for_label }}"
+                                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ form.last_name.label }}
+                                        </label>
+                                        {% render_field form.last_name class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.email.id_for_label }}"
+                                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ form.email.label }}
+                                        </label>
+                                        {% render_field form.email class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.username.id_for_label }}"
+                                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ form.username.label }}
+                                        </label>
+                                        {% render_field form.username class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.password1.id_for_label }}"
+                                               data-tooltip-target="tooltip-password"
+                                               class="mb-2 text-sm font-medium text-gray-900 dark:text-white flex gap-2 items-center">
+                                            <span>{{ form.password1.label }}</span>
+                                            {% include "Components/Icons/circleInfo.html" with class="w-4 h-4" %}
+                                        </label>
+                                        {% render_field form.password1 placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                        <div id="tooltip-password" role="tooltip"
+                                             class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                            {{ form.password1.help_text }}
+                                            <div class="tooltip-arrow" data-popper-arrow></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="{{ form.password2.id_for_label }}"
+                                               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                            {{ form.password2.label }}
+                                        </label>
+                                        {% render_field form.password2 placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                    </div>
+                                </section>
+                            </div>
+                            {% include "Components/ui/togglePasswordVisibility.html" %}
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input id="terms" aria-describedby="terms" type="checkbox"
+                                           class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+                                           required="">
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label for="terms" class="font-light text-gray-500 dark:text-gray-300">I accept the
+                                        <a href="#"
+                                           class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                                            Terms and Conditions
+                                        </a>
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit"
+                                    class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                {% translate "Create your account" %}
+                            </button>
+                        </section>
+
+                        <section id="alternativesTabContent" class="hidden flex-col gap-4 items-center">
+                            {% if SOCIALACCOUNT_ENABLED %}
+                                <div>
+                                    {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+                                </div>
+                            {% endif %}
+                            {% if PASSKEY_SIGNUP_ENABLED %}
+                                <a href="{{ signup_by_passkey_url }}"
+                                   class="flex items-center justify-center gap-2 w-full text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                    {% include "Components/Icons/key.html" with class="w-5 h-5" %}
+                                    <span>{% trans "Sign up using a passkey" %}</span>
+                                </a>
+                            {% endif %}
+                        </section>
+                        <p class="text-sm font-light text-gray-500 dark:text-gray-400">
+                            {% translate "Already have an account? Then please" %}
+                            <a href="{{ login_url }}"
+                               class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                                {% translate "Sign in" %}
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block extra_body %}
+    <script src="{% static 'Home/scripts/components/inputFilePreview.js' %}"></script>
+    <script src="{% static 'Home/scripts/components/handleTabs.js' %}"></script>
+    <script src="{% static 'Home/scripts/components/Helpers/handleInputPassword.js' %}"></script>
+    <script>
+        const handleSignUpTabs = () => {
+            const tabsMenu = document.getElementById('tabsMenu');
+            const tabs = [...tabsMenu.querySelectorAll('button')];
+            const activeTabBtnClasses = ['shadow', 'bg-blue-400', 'dark:bg-white', 'text-white', 'dark:text-blue-500'];
+            const inActiveTabBtnClasses = ['shadow-none', 'bg-transparent', 'text-gray-400'];
+
+            handleTabVisibility(tabs, activeTabBtnClasses, inActiveTabBtnClasses, 'flex');
+        };
+
+        document.addEventListener('DOMContentLoaded', handleSignUpTabs);
+        document.querySelector('input[type="file"]').addEventListener('change', (e) => previewPhoto(e.target));
+    </script>
+{% endblock %}

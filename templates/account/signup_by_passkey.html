@@ -1,0 +1,55 @@
+{% extends "account/base_entrance.html" %}
+{% load widget_tweaks %}
+{% load allauth i18n %}
+{% block head_title %}
+    {% trans "Signup" %}
+{% endblock head_title %}
+{% block content %}
+    <section class="TWMWXJ min-h-screen grid place-content-center">
+        <div class="flex flex-col items-center justify-center px-6 py-8 max-w-lg w-full mx-auto md:h-screen lg:py-0">
+            <div class="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 shadow-lg dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <section class="mb-6">
+                        <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-3">
+                            {% trans "Passkey Sign Up" %}
+                        </h1>
+                        {% setvar link %}
+                            <a href="{{ login_url }}" class="text-blue-700 hover:underline dark:text-blue-500">
+                        {% endsetvar %}
+                        {% setvar end_link %}
+                            </a>
+                        {% endsetvar %}
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% blocktranslate %}Already have an account? Then please {{ link }}sign in{{ end_link }}.{% endblocktranslate %}
+                        </p>
+                    </section>
+                    {% url 'account_signup_by_passkey' as action_url %}
+                    <form action="{{ action_url }}" method="post">
+                        {% csrf_token %}
+                        <section class="flex flex-col gap-2 mb-2">
+                            <article>
+                                <label for="{{ form.email.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.email.label }}
+                                </label>
+                                {% render_field form.email class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                            </article>
+                            <article>
+                                <label for="{{ form.username.id_for_label }}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                    {{ form.username.label }}
+                                </label>
+                                {% render_field form.username class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                            </article>
+                        </section>
+                        <button type="submit"
+                                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            {% trans "Sign Up" %}
+                        </button>
+                        <hr class="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700">
+                        <a href="{{ signup_url }}" class="block text-center text-blue-700 hover:underline dark:text-blue-500">{% trans "Other options" %}</a>
+                        {{ redirect_field }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

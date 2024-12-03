@@ -1,0 +1,30 @@
+{% extends "Layouts/base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block navbar %}
+    {% include 'Components/ui/navbar.html' %}
+{% endblock %}
+
+{% block sub_menu %}
+{% endblock %}
+
+{% block content %}
+	{% if request.user.is_authenticated %}
+    	Hola {{ request.user.get_full_name }}
+        <img src="{{ user.get_avatar }}" alt="Avatar de {{ user.get_full_name }}" class="w-8">
+    {% else %}
+        No autenticado
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+    {% include 'Components/ui/footer.html' %}
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

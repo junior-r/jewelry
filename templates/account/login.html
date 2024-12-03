@@ -1,0 +1,140 @@
+{% extends "account/base_entrance.html" %}
+{% load static %}
+{% load i18n allauth account widget_tweaks %}
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+{% block content %}
+    <section class="bg-transparent min-h-screen grid place-content-center">
+        <div class="flex flex-col items-center justify-center px-6 py-8 max-w-lg w-full mx-auto md:h-screen lg:py-0">
+            <a href="{% url "Home:index" %}" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
+                <img class="w-8 h-8 mr-2" src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+                     alt="logo">
+                AAplus
+            </a>
+            <div class="w-full bg-white rounded-lg dark:border md:mt-0 sm:max-w-md xl:p-0 shadow-lg dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <section class="mb-8">
+                        <h1 class="text-3xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-2">
+                            {% translate "Sign in to your account" %}
+                        </h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">
+                            {% translate "Choose your preferred login method" %}
+                        </p>
+                    </section>
+                    {% if not SOCIALACCOUNT_ONLY %}
+                        {% setvar link %}
+                            <a href="{{ signup_url }}">
+                        {% endsetvar %}
+                    {% setvar end_link %}
+                        </a>
+                    {% endsetvar %}
+                        {% url 'account_login' as login_url %}
+                        <form class="space-y-4 md:space-y-6" method="post" action="{{ login_url }}">
+                            {% csrf_token %}
+                            {{ redirect_field }}
+                            <section id="tabsMenu"
+                                     class="w-full p-1 rounded-lg flex gap-1 items-center justify-center bg-gray-100 dark:bg-gray-700">
+                                <button type="button" id="credentialsTab"
+                                        class="flex-1 py-1 px-2 rounded-lg text-center font-semibold shadow bg-blue-400 dark:bg-white text-white dark:text-blue-500">
+                                    Credenciales
+                                </button>
+                                <button type="button" id="alternativesTab"
+                                        class="flex-1 py-1 px-2 rounded-lg text-center font-semibold shadow-none bg-transparent text-gray-400">
+                                    Alternativas
+                                </button>
+                            </section>
+                            <section id="credentialsTabContent" class="flex flex-col gap-4">
+                                <div>
+                                    <label for="{{ form.login.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.login.label }}
+                                    </label>
+                                    {% render_field form.login class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                                <div>
+                                    <label for="{{ form.password.id_for_label }}"
+                                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                        {{ form.password.label }}
+                                    </label>
+                                    {% render_field form.password class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" %}
+                                </div>
+                                <div class="flex items-start gap-2">
+                                    <div class="flex items-center h-5">
+                                        {% render_field form.remember class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800" %}
+                                    </div>
+                                    <div class="text-sm">
+                                        <label for="{{ form.remember.id_for_label }}"
+                                               class="text-gray-500 dark:text-gray-300">{{ form.remember.label }}</label>
+                                    </div>
+                                </div>
+                                {% include "Components/ui/togglePasswordVisibility.html" %}
+                                <button type="submit"
+                                        class="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                    {% translate "Sign in" %}
+                                </button>
+                            </section>
+                            <section id="alternativesTabContent" class="hidden flex-col gap-4 items-center">
+                                {% if SOCIALACCOUNT_ENABLED %}
+                                    <div class="w-full">
+                                        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+                                    </div>
+                                {% endif %}
+                                {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
+                                    {% if PASSKEY_LOGIN_ENABLED %}
+                                        <button type="submit" form="mfa_login" id="passkey_login"
+                                                class="flex items-center justify-center gap-2 w-full text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                            {% include "Components/Icons/key.html" with class="w-5 h-5" %}
+                                            <span>{% trans "Sign in with a passkey" %}</span>
+                                        </button>
+                                    {% endif %}
+                                    {% if LOGIN_BY_CODE_ENABLED %}
+                                        <a href="{{ request_login_code_url }}"
+                                           class="flex items-center justify-center gap-2 w-full text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-center">
+                                            {% include "Components/Icons/password.html" with class="w-5 h-5" %}
+                                            <span>{% trans "Mail me a sign-in code" %}</span>
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </section>
+
+                            <a href="{% url "account_reset_password" %}"
+                               class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500 text-center block">
+                                {% translate "Forgot password?" %}
+                            </a>
+
+                            <p class="text-sm font-light text-gray-500 dark:text-gray-400 text-center">
+                                {% translate "Don't have an account?" %}
+                                <a href="{% url "account_signup" %}"
+                                   class="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                                    {% translate "Sign up" %}
+                                </a>
+                            </p>
+
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+{% block extra_body %}
+    {{ block.super }}
+    {% if PASSKEY_LOGIN_ENABLED %}
+        {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
+    {% endif %}
+    <script src="{% static 'Home/scripts/components/handleTabs.js' %}"></script>
+    <script src="{% static 'Home/scripts/components/Helpers/handleInputPassword.js' %}"></script>
+    <script>
+        const handleLoginTabs = () => {
+            const tabsMenu = document.getElementById('tabsMenu');
+            const tabs = [...tabsMenu.querySelectorAll('button')];
+            const activeTabBtnClasses = ['shadow', 'bg-blue-400', 'dark:bg-white', 'text-white', 'dark:text-blue-500'];
+            const inActiveTabBtnClasses = ['shadow-none', 'bg-transparent', 'text-gray-400'];
+
+            handleTabVisibility(tabs, activeTabBtnClasses, inActiveTabBtnClasses, 'flex');
+        };
+
+        document.addEventListener('DOMContentLoaded', handleLoginTabs);
+    </script>
+{% endblock %}

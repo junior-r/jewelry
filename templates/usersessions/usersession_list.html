@@ -1,0 +1,83 @@
+{% extends "usersessions/base_manage.html" %}
+{% load allauth %}
+{% load i18n %}
+{% load humanize %}
+{% block head_title %}
+    {% trans "Sessions" %}
+{% endblock head_title %}
+{% block content %}
+    {% if session_count > 1 %}
+        {% url 'usersessions_list' as action_url %}
+    {% else %}
+        {% url 'account_logout' as action_url %}
+    {% endif %}
+    <section class="bg-transparent min-h-screen">
+        <h1 class="text-5xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white mb-4">
+            {% trans "Sessions" %}
+        </h1>
+        <div class="flex flex-col items-center justify-center px-6 py-8 max-w-screen-xl w-full mx-auto md:h-screen lg:py-0">
+            <form action="{{ action_url }}" method="post">
+                {% csrf_token %}
+                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <caption
+                                class="p-4 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                            {% if session_count > 1 %}
+                                <button type="submit"
+                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                    {% translate "Sign Out Other Sessions" %}
+                                </button>
+                            {% else %}
+                                <button type="submit"
+                                        class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+                                    {% translate "Sign Out" %}
+                                </button>
+                            {% endif %}
+                        </caption>
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">
+                                {% translate "Started At" %}
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                {% translate "IP Address" %}
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                {% translate "Browser" %}
+                            </th>
+                            {% if show_last_seen_at %}
+                                <th scope="col" class="px-6 py-3">{% translate "Last seen at" %}</th>
+                            {% endif %}
+                            <th scope="col" class="px-6 py-3"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for session in sessions %}
+                            <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                <td class="px-6 py-4">
+                                    <span title="{{ session.created_at }}">{{ session.created_at|naturaltime }}</span>
+                                </td>
+                                <th class="px-6 py-4" scope="row">{{ session.ip }}</th>
+                                <td class="px-6 py-4">{{ session.user_agent }}</td>
+                                {% if show_last_seen_at %}
+                                    <td class="px-6 py-4">
+                                        <span title="{{ session.last_seen_at }}">{{ session.last_seen_at|naturaltime }}</span>
+                                    </td>
+                                {% endif %}
+                                <td class="px-6 py-4">
+                                    {% if session.is_current %}
+                                        <span class="bg-yellow-100 text-yellow-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">
+                                            {% translate "Current" %}
+                                        </span>
+                                    {% else %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock content %}
